@@ -119,7 +119,7 @@ for ($i = $sourceItems.count; $i -ge 1; $i--) {
     $emailSubject = $sourceItems[$i].Subject
     $emailSenderAddress = $sourceItems[$i].SenderEmailAddress
     foreach ($key in $keyword) {
-        if ($emailSubject -like ("*" + $key."メール件名" + "*") -and $emailSenderAddress -like ("*" + $key."差出人" + "*") ) {
+        if ($emailSubject.Contains($key."メール件名") -and $emailSenderAddress -like ("*" + $key."差出人" + "*") ) {
             $key."数"++
             $totalAlertMail++
             $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
