@@ -98,7 +98,7 @@ write-host ("->{0}  から {1} 　までメール選択します。" -f $startDa
 write-host "お待ちください..."
 $daterange = "{0:MM-dd-yyyy}~{1:MM-dd-yyyy}" -f $startDate, $endDate
 $watch.Start()
-$sFilter = "[ReceivedTime] > '{0:MM/dd/yyyy}' AND [ReceivedTime] < '{1:MM/dd/yyyy}'" -f $startDate, $endDate
+$sFilter = "[ReceivedTime] >= '{0:MM/dd/yyyy HH:mm}' AND [ReceivedTime] < '{1:MM/dd/yyyy HH:mm}'" -f $startDate, $endDate
 $sourceItems = $sourceFolder.items.Restrict($sFilter)
 $elapsed = '経過時間: {0:d2}:{1:d2}:{2:d2}' -f $watch.Elapsed.hours, $watch.Elapsed.minutes, $watch.Elapsed.seconds
 $watch.reset()
