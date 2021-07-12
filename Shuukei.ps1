@@ -116,20 +116,21 @@ $watch.Start()
 $totalAlertMail = 0
 for ($i = $sourceItems.count; $i -ge 1; $i--) {
     $totalEmailsParsed++
-    $emailSubject = $sourceItems[$i].Subject
-    $emailSenderAddress = $sourceItems[$i].SenderEmailAddress
-    foreach ($key in $keyword) {
-        if ($emailSubject.Contains($key."メール件名") -and $emailSenderAddress -like ("*" + $key."差出人" + "*") ) {
-            $key."数"++
-            $totalAlertMail++
-            $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
-            if (!$notMove) {
-                $sourceItems[$i].Move($desFolder) | Out-Null
+    if ($sourceItems[$i].ConversationIndex.length -eq 44) {
+        $emailSubject = $sourceItems[$i].Subject
+        $emailSenderAddress = $sourceItems[$i].SenderEmailAddress
+        foreach ($key in $keyword) {
+            if ($emailSubject.Contains($key."メール件名") -and $emailSenderAddress -like ("*" + $key."差出人" + "*") ) {
+                $key."数"++
+                $totalAlertMail++
+                $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
+                if (!$notMove) {
+                    $sourceItems[$i].Move($desFolder) | Out-Null
+                }
+                Break
             }
-            Break
+            # $item| export-csv F:\test.csv -Encoding UTF8 -Append
         }
-        # $item| export-csv F:\test.csv -Encoding UTF8 -Append
-        
     }
 }
 $elapsed = '経過時間: {0:d2}:{1:d2}:{2:d2}' -f $watch.Elapsed.hours, $watch.Elapsed.minutes, $watch.Elapsed.seconds
