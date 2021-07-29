@@ -112,6 +112,7 @@ if ($notMove) {
 } 
 WriteGap
 write-host "お待ちください..."
+$mailData = @()
 $watch.Start()
 $totalAlertMail = 0
 for ($i = $sourceItems.count; $i -ge 1; $i--) {
@@ -123,7 +124,8 @@ for ($i = $sourceItems.count; $i -ge 1; $i--) {
             if ($emailSubject.Contains($key."メール件名") -and $emailSenderAddress -like ("*" + $key."差出人" + "*") ) {
                 $key."数"++
                 $totalAlertMail++
-                $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
+                # $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
+                $mailData += $sourceItems[$i] | Select-Object -Property Subject, ReceivedTime, SenderEmailAddress, CC, To
                 if (!$notMove) {
                     $sourceItems[$i].Move($desFolder) | Out-Null
                 }
@@ -133,6 +135,7 @@ for ($i = $sourceItems.count; $i -ge 1; $i--) {
         }
     }
 }
+$mailData | Export-Csv $alertMailResult -Encoding UTF8 -Append -NoTypeInformation
 $elapsed = '経過時間: {0:d2}:{1:d2}:{2:d2}' -f $watch.Elapsed.hours, $watch.Elapsed.minutes, $watch.Elapsed.seconds
 $watch.reset()
 Write-Host "完了！ " $elapsed
